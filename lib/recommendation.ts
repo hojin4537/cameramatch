@@ -401,21 +401,8 @@ function evaluateCombination(
     // 바디 추천에서는 보유 장비 평가 제거
     evaluation.evaluation = "후지필름 X 마운트 렌즈와 호환됩니다.";
   } else {
-    // Lens 추천용 (렌즈 추천에서는 여전히 보유 바디 확인)
-    const newLens = newItem as Lens;
-    if (userInput.ownedCamera) {
-      const ownedCamera = allCameras.find((c) => c.id === userInput.ownedCamera);
-      if (ownedCamera) {
-        if (ownedCamera.mount === newLens.mount) {
-          evaluation.evaluation = `보유하신 ${ownedCamera.brand} ${ownedCamera.model}과 완벽하게 호환됩니다.`;
-        } else {
-          evaluation.evaluation = "보유하신 카메라와 마운트가 다릅니다.";
-          evaluation.warning = "마운트 어댑터가 필요합니다.";
-        }
-      }
-    } else {
-      evaluation.evaluation = "후지필름 X 마운트 바디와 호환됩니다.";
-    }
+    // 렌즈 추천: 모든 후지필름 X 마운트 바디와 호환
+    evaluation.evaluation = "후지필름 X 마운트 바디와 호환됩니다.";
   }
 
   return evaluation;
@@ -540,11 +527,6 @@ export async function getRecommendations(
   // Fetch all data
   const allCameras = await getCameras();
   const allLenses = await getLenses();
-
-  // Get owned gear (렌즈 추천에서만 사용)
-  const ownedCamera = userInput.ownedCamera
-    ? await getCameraById(userInput.ownedCamera)
-    : undefined;
 
   // Determine if we're recommending camera or lens based on recommendationType
   const recommendLenses = userInput.recommendationType === "lens";
